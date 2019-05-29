@@ -41,7 +41,12 @@ master %>% filter(country == "France", age == "75+ years") %>%
 
 country <- sample(master$country, 5) 
 
-master%>% group_by(country) %>% filter(year == 2010, suicides_no > 0, age == "75+ years") %>% arrange(desc(`gdp_per_capita ($)`)) %>% 
+master %>% group_by(country) %>% filter(year == 2010, suicides_no > 0, age == "75+ years") %>% arrange(desc(`gdp_per_capita ($)`)) %>% 
       ggplot(aes(`gdp_per_capita ($)`, `suicides/100k pop`)) +
       geom_point() + 
       stat_smooth(model = "lm")
+
+master %>% group_by(country) %>%
+      filter(year == 2010, age == "75+ years") %>%
+      ggplot(aes(`suicides/100k pop`)) + 
+      geom_histogram(binwidth = 1)
