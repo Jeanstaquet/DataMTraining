@@ -108,5 +108,6 @@ small_trains %>% group_by(month) %>%
       summarise(avg_journey = mean(journey_time_avg),
                                                avg_delay_all_departing = mean(avg_delay_all_departing),
                                                avg_delay_all_arriving = mean(avg_delay_all_arriving)) %>% 
-      arrange(desc(avg_delay_all_departing))
+      arrange(desc(avg_delay_all_departing)) 
+a
       
