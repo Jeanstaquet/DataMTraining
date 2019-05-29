@@ -48,5 +48,5 @@ master %>% group_by(country) %>% filter(year == 2010, suicides_no > 0, age == "7
 
 master %>% group_by(country) %>%
       filter(year == 2010, age == "75+ years") %>%
-      ggplot(aes(`suicides/100k pop`)) + 
-      geom_histogram(binwidth = 1)
+      ggplot(aes(x =`suicides/100k pop`, y = population, fill = sex)) + 
+      geom_violin()
