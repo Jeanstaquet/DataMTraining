@@ -108,6 +108,18 @@ small_trains %>% group_by(month) %>%
       summarise(avg_journey = mean(journey_time_avg),
                                                avg_delay_all_departing = mean(avg_delay_all_departing),
                                                avg_delay_all_arriving = mean(avg_delay_all_arriving)) %>% 
-      arrange(desc(avg_delay_all_departing)) 
-a
-      
+      arrange(desc(avg_delay_all_departing)) %>%
+            ggplot(aes(avg_delay_all_departing, avg_delay_all_arriving)) +
+            geom_point() 
+small_trains %>% group_by(departure_station) %>% 
+                 summarise(avg = mean(avg_delay_all_departing)) %>% 
+                 arrange(avg)
+small_trains %>% group_by(departure_station) %>% 
+                 summarise(avg = mean(avg_delay_all_departing)) %>% 
+                 arrange(desc(avg)) %>%
+                 head(10) %>%
+                  ggplot(aes(reorder(departure_station, avg), avg)) + 
+                        geom_point() + 
+                        coord_flip() + 
+                        labs(title = "Les 10 pires stations de retards au départ")
+
