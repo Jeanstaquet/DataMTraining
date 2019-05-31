@@ -1,0 +1,132 @@
+library(gapminder)
+library(dslabs)
+library(ggthemes)
+library(dplyr)
+library(ggplot2)
+library(XLConnect)
+library(readxl)
+library(gdata)
+library(GGally)
+library(lattice)
+library(vcd) #mosaique
+library(reshape2) #la fonction melt()
+library(carData)
+library(RColorBrewer)
+library(Hmisc)
+library(grid)
+library(viridis) #scale_color_viridis
+library(PerformanceAnalytics) #fonction chart.Correlation
+library(ggtern) #ternary plot
+library(geomnet) #geom_net()
+library(ggfortify)
+library(maps)
+library(ggmap) #carte comme google map
+library(gganimate) #gg_animate()
+library(aplpack) #bagplot
+library(mapproj)
+library(waffle) #waffle() ? la place des pies charts
+library(ggbeeswarm) # geom_beeswarm
+library(ggridhes) # geom_density_ridges
+library(lubridate) #convertisseur de date, temps, datacleaning ymd,...
+library(stringr) #cleaning dataset str_pad, str_detect, ...
+library(tidyr)
+library(purrr)
+remplace_na <- function(x, remplacement) {
+      x[is.na(x)] <- remplacement
+      x
+      
+}
+
+a <- sample(c(1:1000, rep(NA, 100)), 50, replace = TRUE)
+
+remplace_na(a, 32)
+
+##Print the square of number
+square <- function(x) {
+      x <- x ^ 2
+      x
+}
+a <- c(1, 2, 3)
+square(a)
+
+is_na <- map_lgl(Vocab, sum)
+typeof(is_na)
+
+df %>% map(summary) %>% map(glimpse)
+
+<<<<<<< HEAD
+=======
+safe_log <- safely(log)
+safe_log(10)
+>>>>>>> 9ec0286c4282e8a14102ca61ad8529365df0b2c5
+a <- Vocab %>% head(20) %>% map(safely(log)) %>% transpose() 
+
+
+results <- a[["result"]]
+errors <- a[["error"]]
+
+a[["error"]][["sex"]]
+
+map2(list(10, 50, 100), list(1, 5, 10), rnorm)
+ 
+rnorm(n = 10, mean = 5, sd = 1)
+rnorm(n = 20, mean = 10, sd = 2)
+rnorm(n = 50, mean = 2, sd = 5)
+
+pmap(list(n = list(10, 20, 30), mean = list(5, 10, 2), sd = list(1, 2, 5)), rnorm)
+
+invoke_map(list(rnorm, runif, rexp), n = 5)
+
+funs <- list("rnorm", "runif", "rexp")
+rnorm_params <- list(mean = 10)
+runif_params <- list(min = 0, max = 5)
+rexp_params <- list(rate = 5)
+
+params <- list(rnorm_params, runif_params, rexp_params)
+
+invoke_map(funs, params, n = 5)
+rm(funs)
+
+Vocab3 <- list(a = Vocab2[[1]],
+               b = Vocab2[[3]],
+               c = Vocab2[[4]])
+
+funs <- list("head", "tail", "str")
+invoke_map(.f = funs, .x = Vocab3)
+
+x <- c(55, 25, 55)
+x %>% walk(print)
+
+cyl <- split(mtcars, mtcars$cyl)
+
+plots <- cyl %>% map(~ ggplot(., aes(mpg, wt)) + geom_point()) 
+paths <- paste0(names(plots), ".pdf")
+walk2(paths, plots, ggsave)
+
+x %>% walk(print) %>% map(str)
+
+rm(funs)
+funs <- list(Normal = "rnorm", Uniform = "runif", Exp = "rexp")
+params <- list(Normal = list(mean = 10), Uniform = list(min = 0, max = 5), Exp = list(rate = 5))
+sims <- invoke_map(funs, params, n = 500)
+walk(sims, hist)
+
+nice_titles <- c("J24", "J25", "J26")
+pwalk(list(x = sims, main = nice_titles), hist, xlab = "")
+sims %>% walk(hist) %>% map(summary)
+
+
+x <- 10:100
+stopifnot(!is.na(x))
+if(is.character(x)) { ### faux donc non, si c'est T il prend la suite
+      stop("'x' should be a character vector", call. = F)
+}
+
+x <- c(rep(NA, 10), 2, 4)
+y <- c(rep(NA, 9), 2, 3, 4)
+
+both_na <- function(x, y) {
+      stopifnot(length(x) == length(y)) 
+      sum(is.na(x) & is.na(y))
+}
+both_na(x, y)
