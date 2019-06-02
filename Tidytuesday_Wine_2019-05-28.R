@@ -66,4 +66,18 @@ wine_price %>% filter(country %in% c("France", "Italy", "US", "Germany")) %>%
       ggplot(aes(reorder(country, points), points)) + 
       geom_violin(alpha = 0.7, fill = NA) + 
       geom_boxplot(alpha = 0.05)
-      
+
+## wine score per taster with 500+ ratings
+
+taster1 <- wine_ratings %>% count(taster_name) %>% filter(!is.na(taster_name), n > 515)
+taster_final <- taster1[[1]]
+wine_ratings %>% filter(taster_name %in% taster_final) %>% summarise(avg_point = mean(points))
+
+wine_ratings %>% filter(taster_name %in% taster_final, country %in% c("France", "Germany", "Us", "Italy")) %>% ggplot(aes(points, taster_name, fill = country)) + 
+      geom_density_ridges(alpha = 0.7, color = NA) +
+      scale_y_discrete("Name of the best tasters", expand = c(0,0))
+      geom_vline(xintercept = 88.6) +
+      theme_excel()
+
+
+
