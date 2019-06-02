@@ -53,3 +53,17 @@ wine_ratings %>% filter(province %in% province_top_p) %>%
       geom_boxplot() + 
       scale_y_log10() + 
       theme(axis.text.x = element_text(angle = 90))
+
+library(ggridges)
+
+wine_ratings %>% filter(province %in% province_top_p) %>% 
+      ggplot(aes(price, province)) +
+      geom_density_ridges(alpha = 0.5, fill = "red") +
+      geom_point(alpha = 0.2, shape = "|", position = position_nudge(y = -0.5))
+      xlim(0, 100)
+
+wine_price %>% filter(country %in% c("France", "Italy", "US", "Germany")) %>% 
+      ggplot(aes(reorder(country, points), points)) + 
+      geom_violin(alpha = 0.7, fill = NA) + 
+      geom_boxplot(alpha = 0.05)
+      
