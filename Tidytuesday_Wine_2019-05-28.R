@@ -1,5 +1,6 @@
 wine_ratings <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-05-28/winemag-data-130k-v2.csv") %>%
-      select(- X1)
+      select(-X1)
+wine_ratings_tbl <- as_tibble(wine_ratings)
 glimpse(wine_ratings) 
 
 country1 <- wine_ratings %>% count(country) %>% filter(n > 50) %>% select(country)
@@ -79,5 +80,33 @@ wine_ratings %>% filter(taster_name %in% taster_final, country %in% c("France", 
       geom_vline(xintercept = 88.6) +
       theme_excel()
 
+## Text analysis wine ratings
+library(tidytext)
+library(tidyverse)
+      
+tidy_wine_description <- wine_ratings %>% unnest_tokens(word, description)
+
+tidy_wine_description2 <- tidy_wine_description %>% anti_join(stop_words2)
+
+top10_words <- tidy_wine_description2 %>% filter(points > 95, country == "US") %>% count(word) %>% arrange(desc(n)) %>% top_n(15, n) %>% mutate(word2 = fct_reorder(word, n)) 
+
+top10_words %>% ggplot(aes(word2, n)) + 
+                  geom_col() +
+                  coord_flip() + 
+                  labs(title = "Review Word Count")
 
 
+#### Add some stop words
+custom_words <- tribble(
+      ~word, ~lexicon,
+      "wine", "CUSTOM",
+      "flavors", "CUSTOM")
+
+stop_words2 <- stop_words %>% bind_rows(custom_words)
+
+min10_words <- tidy_wine_description2 %>% filter(points < 85, country == "US") %>% count(word) %>% arrange(desc(n)) %>% top_n(15, n) %>% mutate(word2 = fct_reorder(word, n))
+
+min10_words %>% ggplot(aes(word2, n)) + 
+      geom_col() +
+      coord_flip() + 
+      labs(title = "Review Word Count")
