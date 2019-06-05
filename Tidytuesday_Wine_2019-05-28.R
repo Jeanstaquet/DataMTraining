@@ -62,11 +62,19 @@ wine_ratings %>% filter(province %in% province_top_p) %>%
       geom_density_ridges(alpha = 0.5, fill = "red") +
       geom_point(alpha = 0.2, shape = "|", position = position_nudge(y = -0.5))
       xlim(0, 100)
+      
+avg_country <- wine_price %>% filter(country %in% c("France", "Italy", "US", "Germany")) %>% summarise(avg_point = mean(points)) %>% pull()  
 
-wine_price %>% filter(country %in% c("France", "Italy", "US", "Germany")) %>% 
-      ggplot(aes(reorder(country, points), points)) + 
-      geom_violin(alpha = 0.7, fill = NA) + 
-      geom_boxplot(alpha = 0.05)
+mean_country <- wine_price %>% group_by(country) %>% filter(country %in% c("France", "Italy", "US", "Germany")) %>% select(country, points) %>% summarise(mean = mean(points))
+
+wine_price %>% filter(country %in% c("France", "Italy", "US", "Germany")) %>% sample_n(10000) %>%
+      ggplot(aes(reorder(country, points), points, color = country)) + 
+      geom_point(position = "jitter", alpha = 0.05) +
+      geom_hline(yintercept = avg_country, color = "grey70", size = 1) +
+      geom_point(data = mean_country, aes(country, mean, color = country), size = 5) +
+      coord_flip() + 
+      annotate("text", x = "Italy", y = 97.5, size = 5, color = "grey70",
+               label = "eazeaeda")
 
 ## wine score per taster with 500+ ratings
 
@@ -88,12 +96,12 @@ tidy_wine_description <- wine_ratings %>% unnest_tokens(word, description)
 
 tidy_wine_description2 <- tidy_wine_description %>% anti_join(stop_words2)
 
-top10_words <- tidy_wine_description2 %>% filter(points > 95, country == "US") %>% count(word) %>% arrange(desc(n)) %>% top_n(15, n) %>% mutate(word2 = fct_reorder(word, n)) 
+top15_words <- tidy_wine_description2 %>% filter(points > 95, country == "US") %>% count(word) %>% arrange(desc(n)) %>% top_n(15, n) %>% mutate(word2 = fct_reorder(word, n)) 
 
-top10_words %>% ggplot(aes(word2, n)) + 
+top15_words %>% ggplot(aes(word2, n)) + 
                   geom_col() +
                   coord_flip() + 
-                  labs(title = "Review Word Count")
+                  labs(title = "Review Word Count, + 15")
 
 
 #### Add some stop words
@@ -104,9 +112,13 @@ custom_words <- tribble(
 
 stop_words2 <- stop_words %>% bind_rows(custom_words)
 
-min10_words <- tidy_wine_description2 %>% filter(points < 85, country == "US") %>% count(word) %>% arrange(desc(n)) %>% top_n(15, n) %>% mutate(word2 = fct_reorder(word, n))
+min15_words <- tidy_wine_description2 %>% filter(points < 85, country == "US") %>% count(word) %>% arrange(desc(n)) %>% top_n(15, n) %>% mutate(word2 = fct_reorder(word, n))
 
-min10_words %>% ggplot(aes(word2, n)) + 
+min15_words %>% ggplot(aes(word2, n)) + 
       geom_col() +
       coord_flip() + 
-      labs(title = "Review Word Count")
+      labs(title = "Review Word Count, -15")
+
+library(wordcloud)
+wordcloud(words = min15_words$word2, freq = min15_words, max.words = 15)
+
